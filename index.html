@@ -464,6 +464,27 @@
     .aid-grid{grid-template-columns:1fr;}
     .menu-btn{display:flex !important;}
     .main-wrapper { padding-bottom: 96px; }
+    
+    /* UI Fixes for Mobile Layout Constraints */
+    .topbar { padding: 0 16px; }
+    .topbar > div:first-child { flex: 1; min-width: 0; }
+    .search-wrap { max-width: 100%; }
+    .search-input { padding: 11px 12px 11px 36px; font-size: 13px; }
+    .wellness-card { flex-direction: column; text-align: center; padding: 24px 16px; gap: 20px; }
+    .wellness-glow { right: -50%; opacity: 0.08; }
+    .wellness-stats { flex-wrap: wrap; justify-content: center; }
+    .page-head { flex-direction: column; align-items: stretch; text-align: center; }
+    .toggle-group { width: 100%; display: flex; }
+    .toggle-btn { flex: 1; }
+    .log-table-card { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .log-table-card table { min-width: 500px; }
+    .em-head { flex-direction: column; align-items: stretch; text-align: center; }
+    .em-title { flex-direction: column; justify-content: center; }
+    .call-btn { width: 100%; justify-content: center; margin-top: 8px; }
+    .vax-card { padding: 20px 16px; }
+    .vax-grid, .meds-grid { grid-template-columns: 1fr; }
+
+    /* Mobile Nav Bar */
     .mobile-nav {
       display: flex; position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
       background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
@@ -472,9 +493,9 @@
       width: calc(100% - 32px); max-width: 420px; justify-content: space-between;
     }
     .mn-btn-em {
-      background: var(--red-700); color: #fff; border: none; border-radius: 9999px;
+      background: var(--green-900); color: #fff; border: none; border-radius: 9999px;
       height: 52px; width: 64px; display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0; margin-right: 8px; box-shadow: 0px 4px 12px rgba(186,26,26,0.3); transition: transform 0.15s ease;
+      flex-shrink: 0; margin-right: 8px; box-shadow: 0px 4px 12px rgba(0,69,50,0.3); transition: transform 0.15s ease;
     }
     .mn-btn-em:active { transform: scale(0.95); }
     .mn-btn {
@@ -488,7 +509,7 @@
     .mn-badge { position: relative; }
     .mn-badge .badge-dot {
       position: absolute; top: 0px; right: 25%; width: 10px; height: 10px;
-      background: var(--red-700); border: 2px solid #fff; border-radius: 50%;
+      background: var(--green-900); border: 2px solid #fff; border-radius: 50%;
     }
   }
   .menu-btn{display:none;}
