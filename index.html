@@ -516,6 +516,22 @@
     }
   }
   .menu-btn{display:none;}
+
+  /* ---------- AUTH ---------- */
+  body.auth-mode .sidebar, body.auth-mode .topbar, body.auth-mode .mobile-nav { display: none !important; }
+  body.auth-mode .main-wrapper { margin-left: 0 !important; padding: 0 !important; background: var(--bg); display:flex; align-items:center; justify-content:center; min-height: 100vh; }
+  #view-auth { display: none; width: 100%; max-width: 440px; }
+  #view-auth.active { display: block; padding: 24px; }
+  .auth-card { padding: 48px 32px; background: var(--card); border-radius: 24px; box-shadow: 0 12px 40px rgba(0,0,0,0.06); border: 1px solid rgba(0,69,50,0.05); }
+  .input-group { margin-bottom: 20px; }
+  .input-label { display: block; font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 8px; }
+  .auth-input { width: 100%; padding: 12px 16px; border-radius: 12px; border: 1px solid #e2e8f0; font-size: 15px; outline: none; transition: border-color 0.2s ease; }
+  .auth-input:focus { border-color: var(--green-900); }
+  .auth-submit { width: 100%; padding: 14px; border-radius: 12px; background: var(--green-900); color: #fff; font-size: 15px; font-weight: 600; border: none; cursor: pointer; transition: transform 0.15s ease, background 0.2s ease; margin-top: 8px; }
+  .auth-submit:hover { background: var(--green-800); }
+  .auth-submit:active { transform: scale(0.98); }
+  .auth-footer { margin-top: 24px; text-align: center; font-size: 14px; color: var(--ink-soft); }
+  .auth-footer a { color: var(--green-900); font-weight: 600; text-decoration: none; }
 </style>
 </head>
 <body>
@@ -587,6 +603,33 @@
         <img class="avatar" id="topAvatar" src="https://images.unsplash.com/photo-1517849845537-4d257902861a?w=100&h=100&fit=crop" alt="Profile" />
       </div>
     </header>
+
+    <!-- ============ AUTH VIEW ============ -->
+    <main class="view" id="view-auth">
+      <div class="auth-card">
+        <div style="text-align:center;margin-bottom:32px;">
+          <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="var(--green-900)" stroke-width="1.8" style="margin-bottom:12px;">
+            <path d="M8.5 12.5c-2.2 0-4-2.1-4-4.5S6.3 3.5 8.5 3.5s4 2.1 4 4.5-1.8 4.5-4 4.5Z"/><path d="M15.5 12.5c2.2 0 4-2.1 4-4.5S17.7 3.5 15.5 3.5s-4 2.1-4 4.5 1.8 4.5 4 4.5Z"/><path d="M4.5 18c-1.4 0-2.5-1.5-2.5-3.2S3.1 12 4.5 12s2.5 1.4 2.5 3.1S5.9 18 4.5 18Z"/><path d="M19.5 18c1.4 0 2.5-1.5 2.5-3.2S20.9 12 19.5 12s-2.5 1.4-2.5 3.1S18.1 18 19.5 18Z"/><path d="M12 21.5c-2.8 0-5.2-1.4-5.2-3.9 0-2.3 2-4.6 5.2-4.6s5.2 2.3 5.2 4.6c0 2.5-2.4 3.9-5.2 3.9Z"/>
+          </svg>
+          <h2 style="font-size:24px;">Welcome to PawCare</h2>
+          <p style="color:var(--ink-soft);font-size:15px;margin-top:8px;">Sign in to manage your pet's life</p>
+        </div>
+        <form id="authForm" onsubmit="handleLogin(event)">
+          <div class="input-group">
+            <label class="input-label">Email Address</label>
+            <input type="email" class="auth-input" placeholder="sarah@example.com" value="sarah@example.com" required>
+          </div>
+          <div class="input-group">
+            <label class="input-label">Password</label>
+            <input type="password" class="auth-input" placeholder="••••••••" value="password123" required>
+          </div>
+          <button type="submit" class="auth-submit">Sign In</button>
+        </form>
+        <div class="auth-footer">
+          Don't have an account? <a href="#" onclick="alert('Switching to Sign Up...')">Create one</a>
+        </div>
+      </div>
+    </main>
 
     <!-- ============ HOME VIEW ============ -->
     <main class="view active" id="view-home">
@@ -1447,13 +1490,28 @@ function selectPet(id){
   renderAll();
 }
 
+function handleLogin(e){
+  e.preventDefault();
+  switchView('home');
+}
+
 /* ===================== NAV / VIEW SWITCHING ===================== */
 function switchView(name){
+  if(name === 'auth') {
+    document.body.classList.add('auth-mode');
+  } else {
+    document.body.classList.remove('auth-mode');
+  }
+
   document.querySelectorAll('.nav-item[data-view]').forEach(b=>b.classList.toggle('active', b.dataset.view===name));
   document.querySelectorAll('.mn-btn[data-view]').forEach(b=>b.classList.toggle('active', b.dataset.view===name));
-  const views = ['home','health','activity','emergency','reminders','expenses'];
+  
+  const views = ['home','health','activity','emergency','reminders','expenses','auth'];
   if(views.includes(name)){
-    views.forEach(v=>document.getElementById('view-'+v).classList.toggle('active', v===name));
+    views.forEach(v=>{
+      const el = document.getElementById('view-'+v);
+      if(el) el.classList.toggle('active', v===name);
+    });
   }
   document.getElementById('sidebar').classList.remove('open');
   window.scrollTo({top:0,behavior:'smooth'});
@@ -1474,7 +1532,7 @@ document.getElementById('searchInput').addEventListener('keydown', (e)=>{
 });
 
 /* ===================== INIT ===================== */
-switchView('home');
+switchView('auth');
 renderAll();
 </script>
 </body>
