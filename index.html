@@ -545,6 +545,21 @@
   .toggle-switch.on::after { transform:translateX(20px); }
   .btn-danger-outline { padding:10px 16px; border-radius:8px; border:1px solid var(--red-700); color:var(--red-700); background:transparent; font-weight:600; cursor:pointer; transition:all 0.15s; }
   .btn-danger-outline:hover { background:var(--red-50); }
+
+  /* ---------- MODAL ---------- */
+  .modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(1, 23, 17, 0.4); backdrop-filter:blur(4px); display:flex; align-items:center; justify-content:center; z-index:9999; opacity:0; pointer-events:none; transition:opacity 0.25s ease; padding:20px; }
+  .modal-overlay.open { opacity:1; pointer-events:auto; }
+  .modal-card { background:var(--card); width:100%; max-width:500px; border-radius:24px; box-shadow:0 12px 40px rgba(0,0,0,0.12); transform:translateY(20px); transition:transform 0.25s cubic-bezier(0.16, 1, 0.3, 1); max-height:90vh; display:flex; flex-direction:column; overflow:hidden; border:1px solid rgba(0,69,50,0.05); }
+  .modal-overlay.open .modal-card { transform:translateY(0); }
+  .modal-header { padding:24px; border-bottom:1px solid #f1f5f9; display:flex; align-items:center; gap:16px; position:relative; }
+  .modal-close { position:absolute; top:24px; right:24px; background:#f1f5f9; border:none; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--ink-soft); transition:background 0.2s; }
+  .modal-close:hover { background:#e2e8f0; color:var(--ink); }
+  .modal-body { padding:24px; overflow-y:auto; font-size:15px; line-height:1.6; color:var(--ink); }
+  .modal-body ul { padding-left:20px; margin-top:12px; }
+  .modal-body li { margin-bottom:12px; }
+  .modal-body li::marker { color:var(--green-900); font-weight:bold; }
+  .modal-title { font-size:20px; font-weight:700; color:var(--ink); margin-bottom:4px; }
+  .modal-sub { font-size:14px; color:var(--ink-soft); }
 </style>
 </head>
 <body>
@@ -1017,19 +1032,19 @@
 
       <div class="aid-title">Quick First Aid Guides</div>
       <div class="aid-grid">
-        <div class="aid-card">
+        <div class="aid-card" style="cursor:pointer;" onclick="openGuide('choking')">
           <div class="aid-icon" style="background:#fef3c7;color:#92400e;"><svg width="17" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 2v10M4 2v6a3 3 0 0 0 6 0V2M17 2c-2 3-2 5-2 8a2 2 0 0 0 4 0c0-3 0-5-2-8ZM17 13v9"/></svg></div>
           <div><div class="aid-name">Choking</div><div class="aid-sub">Heimlich maneuver</div></div>
         </div>
-        <div class="aid-card">
+        <div class="aid-card" style="cursor:pointer;" onclick="openGuide('toxin')">
           <div class="aid-icon" style="background:var(--red-bg);color:var(--red-800);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3h6M10 3v5.4a3 3 0 0 1-.6 1.8L6 15.6A4 4 0 0 0 9.2 22h5.6a4 4 0 0 0 3.2-6.4l-3.4-5.4A3 3 0 0 1 14 8.4V3"/></svg></div>
           <div><div class="aid-name">Toxin Ingestion</div><div class="aid-sub">What to do first</div></div>
         </div>
-        <div class="aid-card">
+        <div class="aid-card" style="cursor:pointer;" onclick="openGuide('bleeding')">
           <div class="aid-icon" style="background:var(--blue-200);color:var(--green-900);"><svg width="16" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11Z"/></svg></div>
           <div><div class="aid-name">Bleeding</div><div class="aid-sub">Apply pressure</div></div>
         </div>
-        <div class="aid-card">
+        <div class="aid-card" style="cursor:pointer;" onclick="openGuide('heatstroke')">
           <div class="aid-icon" style="background:#e0e7ff;color:#3730a3;"><svg width="10" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 4a2 2 0 1 0-4 0v9.5a4 4 0 1 0 4 0V4Z"/></svg></div>
           <div><div class="aid-name">Heatstroke</div><div class="aid-sub">Cooling steps</div></div>
         </div>
@@ -1119,7 +1134,100 @@
   </div>
 </div>
 
+<!-- ============ MODAL OVERLAY ============ -->
+<div id="guideModal" class="modal-overlay" onclick="if(event.target===this) closeGuide()">
+  <div class="modal-card">
+    <div class="modal-header">
+      <div id="guideModalIcon"></div>
+      <div>
+        <div class="modal-title" id="guideModalTitle">Title</div>
+        <div class="modal-sub" id="guideModalSub">Sub</div>
+      </div>
+      <button class="modal-close" onclick="closeGuide()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <strong>Follow these steps immediately:</strong>
+      <ul id="guideModalSteps">
+      </ul>
+      <div style="margin-top:24px; padding:16px; background:var(--red-50); border:1px solid var(--red-200); border-radius:12px; color:var(--red-800); font-size:14px; display:flex; gap:12px; align-items:center;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;"><path d="m21.7 19-9-16a2 2 0 0 0-3.4 0l-9 16a2 2 0 0 0 1.7 3h18a2 2 0 0 0 1.7-3zM12 9v4M12 17h.01"/></svg>
+        <span>If the situation does not improve or you are unsure, proceed to the nearest Emergency Clinic immediately.</span>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
+/* ===================== FIRST AID GUIDES DATA ===================== */
+const FIRST_AID_GUIDES = {
+  choking: {
+    title: 'Choking (Heimlich Maneuver)',
+    sub: 'Immediate action required if pet cannot breathe',
+    icon: '<div class="aid-icon" style="background:#fef3c7;color:#92400e;width:48px;height:48px;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 2v10M4 2v6a3 3 0 0 0 6 0V2M17 2c-2 3-2 5-2 8a2 2 0 0 0 4 0c0-3 0-5-2-8ZM17 13v9"/></svg></div>',
+    steps: [
+      'Check inside the mouth to see if you can easily remove the object. Do not push it further down.',
+      'If unable to remove, place your hands on both sides of the rib cage and apply firm, quick pressure.',
+      'For larger dogs, stand behind them, place your fist just below the rib cage, and thrust upwards and forwards.',
+      'Repeat until the object is dislodged.',
+      'Seek veterinary care immediately after dislodging the object.'
+    ]
+  },
+  toxin: {
+    title: 'Toxin Ingestion',
+    sub: 'What to do if your pet eats something toxic',
+    icon: '<div class="aid-icon" style="background:var(--red-bg);color:var(--red-800);width:48px;height:48px;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3h6M10 3v5.4a3 3 0 0 1-.6 1.8L6 15.6A4 4 0 0 0 9.2 22h5.6a4 4 0 0 0 3.2-6.4l-3.4-5.4A3 3 0 0 1 14 8.4V3"/></svg></div>',
+    steps: [
+      'Identify what was ingested and, if possible, the amount and time of ingestion.',
+      'Do NOT induce vomiting unless explicitly instructed by a veterinarian or poison control.',
+      'Call the Pet Poison Helpline or your local emergency vet immediately.',
+      'Keep the packaging or a sample of the toxin to show the vet.',
+      'Monitor your pet closely for symptoms like lethargy, vomiting, or seizures while en route to the clinic.'
+    ]
+  },
+  bleeding: {
+    title: 'Bleeding',
+    sub: 'How to safely apply pressure to wounds',
+    icon: '<div class="aid-icon" style="background:var(--blue-200);color:var(--green-900);width:48px;height:48px;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11Z"/></svg></div>',
+    steps: [
+      'Place a clean, dry cloth or sterile gauze directly over the wound.',
+      'Apply firm, continuous pressure for at least 3-5 minutes without lifting the cloth to check.',
+      'If blood soaks through, do not remove the cloth; place another on top and continue pressure.',
+      'Elevate the injured limb if possible to slow the bleeding.',
+      'Wrap the wound firmly (but not too tight to cut off circulation) and go to the vet.'
+    ]
+  },
+  heatstroke: {
+    title: 'Heatstroke',
+    sub: 'Immediate cooling steps to lower body temperature',
+    icon: '<div class="aid-icon" style="background:#e0e7ff;color:#3730a3;width:48px;height:48px;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 4a2 2 0 1 0-4 0v9.5a4 4 0 1 0 4 0V4Z"/></svg></div>',
+    steps: [
+      'Move your pet to a shaded or air-conditioned area immediately.',
+      'Apply cool (NOT cold or ice) water over their body, especially around the neck, armpits, and groin.',
+      'Place a fan near them to help evaporative cooling.',
+      'Offer small amounts of cool water to drink, but do not force it.',
+      'Transport your pet to the nearest veterinary emergency hospital immediately.'
+    ]
+  }
+};
+
+function openGuide(id) {
+  const guide = FIRST_AID_GUIDES[id];
+  if(!guide) return;
+  document.getElementById('guideModalIcon').innerHTML = guide.icon;
+  document.getElementById('guideModalTitle').textContent = guide.title;
+  document.getElementById('guideModalSub').textContent = guide.sub;
+  document.getElementById('guideModalSteps').innerHTML = guide.steps.map(s => `<li>${s}</li>`).join('');
+  document.getElementById('guideModal').classList.add('open');
+}
+
+function closeGuide() {
+  document.getElementById('guideModal').classList.remove('open');
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeGuide();
+});
+
 /* ===================== MOCK DATA ===================== */
 const PETS = {
   bella: {
