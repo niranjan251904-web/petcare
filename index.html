@@ -910,6 +910,60 @@
       </div>
     </main>
 
+    <!-- ============ REMINDERS VIEW ============ -->
+    <main class="view" id="view-reminders">
+      <div class="page-head">
+        <div>
+          <h1>Reminders & Tasks</h1>
+          <p id="remSub">Stay on top of daily care and upcoming schedules</p>
+        </div>
+      </div>
+      <div class="health-grid">
+        <div class="panel">
+          <div class="panel-head"><h2>Today's Tasks</h2></div>
+          <div id="remTodayList"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><h2>Upcoming Schedule</h2></div>
+          <div id="remUpcomingList"></div>
+        </div>
+      </div>
+    </main>
+
+    <!-- ============ EXPENSES VIEW ============ -->
+    <main class="view" id="view-expenses">
+      <div class="page-head">
+        <div>
+          <h1>Financial Overview</h1>
+          <p id="expSub">Track your pet care spending</p>
+        </div>
+      </div>
+      <div class="bento bento-bottom" style="margin-top:0;">
+        <div class="panel" style="grid-column: span 1;">
+          <div class="panel-head"><h2>Monthly Budget</h2></div>
+          <div class="exp-total" id="expPageTotal"></div>
+          <div class="exp-trend" id="expPageTrend"></div>
+          <div class="nutri-row-head" style="margin-top:24px;"><span>Budget Limit</span><span id="expBudgetLimit"></span></div>
+          <div class="progress-track" style="margin-top:8px;"><div class="progress-fill" id="expBudgetFill" style="background:var(--red-700);"></div></div>
+        </div>
+        <div class="panel" style="grid-column: span 1;">
+          <div class="panel-head"><h2>Category Breakdown</h2></div>
+          <div class="qa-grid" id="expCategories" style="grid-template-columns:1fr 1fr; gap:16px;"></div>
+        </div>
+      </div>
+      <div class="log-table-card">
+        <div class="log-head"><h3>Transaction History</h3></div>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr><th>Date</th><th>Item</th><th>Category</th><th>Amount</th></tr>
+            </thead>
+            <tbody id="expHistoryTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+
     <nav class="mobile-nav" id="mobileNav">
       <button class="mn-btn-em" data-view="emergency" onclick="switchView('emergency')">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v6M12 22v-2M4.9 4.9l4.2 4.2M15 15l4.2 4.2M2 12h6M16 12h6M4.9 19.1l4.2-4.2M15 9l4.2-4.2"/></svg>
@@ -958,11 +1012,40 @@ const PETS = {
       {mo:'Oct', dy:'14', title:'Annual Checkup', loc:'City Vet Clinic'},
       {mo:'Oct', dy:'22', title:'Grooming Session', loc:'2:00 PM · Paws & Claws'},
     ],
-    expenses:{total:'$145.50', trend:'12% vs last month', items:[
-      {name:'Premium Dog Food', amt:'$85.00', icon:'bag'},
-      {name:'Flea & Tick Meds', amt:'$45.50', icon:'pill'},
-      {name:'Chew Toys', amt:'$15.00', icon:'toy'},
-    ]},
+    reminders:{
+      today:[
+        {title:'Morning Walk (30m)', time:'7:00 AM', done:true},
+        {title:'Breakfast & Supplements', time:'8:00 AM', done:true},
+        {title:'Evening Walk', time:'5:30 PM', done:false},
+        {title:'Heartworm Medication', time:'Due today', done:false, overdue:true},
+        {title:'Brush Coat', time:'8:00 PM', done:false},
+      ],
+      upcoming:[
+        {title:'Annual Checkup', type:'Vet Visit', date:'Oct 14'},
+        {title:'Grooming Session', type:'Groomer', date:'Oct 22'},
+        {title:'Buy Dog Food', type:'Shopping', date:'Oct 28'},
+      ]
+    },
+    expenses:{total:'$145.50', trend:'12% vs last month', spentNum:145.50, budget:'$200.00', budgetNum:200, 
+      categories:[
+        {name:'Food', amt:'$85.00'},
+        {name:'Medical', amt:'$45.50'},
+        {name:'Toys', amt:'$15.00'},
+        {name:'Grooming', amt:'$0.00'}
+      ],
+      items:[
+        {name:'Premium Dog Food', amt:'$85.00', icon:'bag'},
+        {name:'Flea & Tick Meds', amt:'$45.50', icon:'pill'},
+        {name:'Chew Toys', amt:'$15.00', icon:'toy'},
+      ],
+      history:[
+        {date:'Oct 10, 2023', item:'Chew Toys', cat:'Toys', amt:'$15.00'},
+        {date:'Oct 05, 2023', item:'Flea & Tick Meds', cat:'Medical', amt:'$45.50'},
+        {date:'Oct 02, 2023', item:'Premium Dog Food', cat:'Food', amt:'$85.00'},
+        {date:'Sep 28, 2023', item:'Grooming Session', cat:'Grooming', amt:'$60.00'},
+        {date:'Sep 15, 2023', item:'Annual Vet Visit', cat:'Medical', amt:'$120.00'}
+      ]
+    },
     vax:[
       {name:'Rabies (1-year)', sub:'Given: Oct 12, 2023', status:'ok'},
       {name:'Bordetella', sub:'Expires: In 14 days', status:'warn'},
@@ -1023,11 +1106,37 @@ const PETS = {
       {mo:'Nov', dy:'02', title:'Wellness Exam', loc:'Feline Health Center'},
       {mo:'Nov', dy:'18', title:'Vaccine Booster', loc:'10:30 AM · City Vet Clinic'},
     ],
-    expenses:{total:'$92.30', trend:'4% vs last month', items:[
-      {name:'Grain-Free Cat Food', amt:'$52.00', icon:'bag'},
-      {name:'Litter (Clumping)', amt:'$24.30', icon:'pill'},
-      {name:'Feather Wand Toy', amt:'$16.00', icon:'toy'},
-    ]},
+    reminders:{
+      today:[
+        {title:'Morning Feeding', time:'7:30 AM', done:true},
+        {title:'Litter Box Check', time:'9:00 AM', done:true},
+        {title:'Playtime (15m)', time:'6:00 PM', done:false},
+        {title:'Evening Feeding', time:'7:00 PM', done:false},
+      ],
+      upcoming:[
+        {title:'Wellness Exam', type:'Vet Visit', date:'Nov 02'},
+        {title:'Vaccine Booster', type:'Vet Visit', date:'Nov 18'},
+      ]
+    },
+    expenses:{total:'$92.30', trend:'4% vs last month', spentNum:92.30, budget:'$120.00', budgetNum:120, 
+      categories:[
+        {name:'Food', amt:'$52.00'},
+        {name:'Supplies', amt:'$24.30'},
+        {name:'Toys', amt:'$16.00'},
+        {name:'Medical', amt:'$0.00'}
+      ],
+      items:[
+        {name:'Grain-Free Cat Food', amt:'$52.00', icon:'bag'},
+        {name:'Litter (Clumping)', amt:'$24.30', icon:'pill'},
+        {name:'Feather Wand Toy', amt:'$16.00', icon:'toy'},
+      ],
+      history:[
+        {date:'Oct 12, 2023', item:'Feather Wand Toy', cat:'Toys', amt:'$16.00'},
+        {date:'Oct 08, 2023', item:'Litter (Clumping)', cat:'Supplies', amt:'$24.30'},
+        {date:'Oct 01, 2023', item:'Grain-Free Cat Food', cat:'Food', amt:'$52.00'},
+        {date:'Sep 20, 2023', item:'Cat Tree', cat:'Toys', amt:'$85.00'}
+      ]
+    },
     vax:[
       {name:'FVRCP', sub:'Given: Jun 18, 2023', status:'ok'},
       {name:'Rabies (1-year)', sub:'Expires: In 30 days', status:'warn'},
@@ -1267,12 +1376,70 @@ function renderEmergency(){
   document.getElementById('emMeds').textContent = p.emergency.meds;
 }
 
+function renderReminders(){
+  const p = STATE.currentPet;
+  document.getElementById('remSub').textContent = `Stay on top of ${p.name}'s care routine`;
+  
+  document.getElementById('remTodayList').innerHTML = p.reminders.today.map(c=>`
+    <div class="care-item ${c.done?'done':(c.overdue?'overdue':'pending')}">
+      <div class="care-check">
+        ${c.done?'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>':''}
+      </div>
+      <div>
+        <div class="care-title">${c.title}</div>
+        <div class="care-time ${c.overdue?'overdue':''}">${c.time}</div>
+      </div>
+    </div>
+  `).join('');
+
+  document.getElementById('remUpcomingList').innerHTML = p.reminders.upcoming.map(u=>`
+    <div class="upcoming-visit">
+      <div>
+        <div class="uv-title">${u.title}</div>
+        <div class="uv-loc">${u.type}</div>
+      </div>
+      <div>
+        <div class="uv-date">${u.date}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderExpenses(){
+  const p = STATE.currentPet;
+  document.getElementById('expSub').textContent = `Track ${p.name}'s spending`;
+  
+  document.getElementById('expPageTotal').textContent = p.expenses.total;
+  document.getElementById('expPageTrend').innerHTML = `<svg width="13" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 17 13.5 8.5 8.5 13.5 2 7"/><path d="M16 17h6v-6"/></svg> ${p.expenses.trend}`;
+  document.getElementById('expBudgetLimit').textContent = p.expenses.budget;
+  
+  const pct = Math.min((p.expenses.spentNum / p.expenses.budgetNum) * 100, 100);
+  const fill = document.getElementById('expBudgetFill');
+  fill.style.width = pct + '%';
+  fill.style.background = pct > 90 ? 'var(--red-700)' : (pct > 75 ? '#d97706' : 'var(--green-900)');
+
+  document.getElementById('expCategories').innerHTML = p.expenses.categories.map(c=>`
+    <div class="stat-pill"><div class="slabel">${c.name}</div><div class="sval" style="color:var(--ink);">${c.amt}</div></div>
+  `).join('');
+
+  document.getElementById('expHistoryTable').innerHTML = p.expenses.history.map(h=>`
+    <tr>
+      <td class="date-cell">${h.date}</td>
+      <td class="val-cell">${h.item}</td>
+      <td class="detail-cell">${h.cat}</td>
+      <td class="val-cell" style="color:var(--ink);">${h.amt}</td>
+    </tr>
+  `).join('');
+}
+
 function renderAll(){
   renderPetSwitcher();
   renderHome();
   renderHealth();
   renderActivity();
   renderEmergency();
+  renderReminders();
+  renderExpenses();
 }
 
 function selectPet(id){
@@ -1284,14 +1451,9 @@ function selectPet(id){
 function switchView(name){
   document.querySelectorAll('.nav-item[data-view]').forEach(b=>b.classList.toggle('active', b.dataset.view===name));
   document.querySelectorAll('.mn-btn[data-view]').forEach(b=>b.classList.toggle('active', b.dataset.view===name));
-  const views = ['home','health','activity','emergency'];
+  const views = ['home','health','activity','emergency','reminders','expenses'];
   if(views.includes(name)){
     views.forEach(v=>document.getElementById('view-'+v).classList.toggle('active', v===name));
-  } else {
-    // reminders / expenses placeholders -> just show home for now with a toast
-    views.forEach(v=>document.getElementById('view-'+v).classList.toggle('active', v==='home'));
-    document.querySelector('.nav-item[data-view="home"]').classList.add('active');
-    document.querySelector('.mn-btn[data-view="home"]').classList.add('active');
   }
   document.getElementById('sidebar').classList.remove('open');
   window.scrollTo({top:0,behavior:'smooth'});
