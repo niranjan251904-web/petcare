@@ -532,6 +532,19 @@
   .auth-submit:active { transform: scale(0.98); }
   .auth-footer { margin-top: 24px; text-align: center; font-size: 14px; color: var(--ink-soft); }
   .auth-footer a { color: var(--green-900); font-weight: 600; text-decoration: none; }
+
+  /* ---------- SETTINGS ROW ---------- */
+  .settings-row { display:flex; align-items:center; justify-content:space-between; padding:16px 0; border-bottom:1px solid #f1f5f9; }
+  .settings-row:last-child { border-bottom:none; }
+  .settings-info { display:flex; flex-direction:column; gap:4px; }
+  .settings-title { font-weight:600; color:var(--ink); font-size:14px; }
+  .settings-desc { font-size:13px; color:var(--ink-soft); }
+  .toggle-switch { position:relative; width:44px; height:24px; background:#e2e8f0; border-radius:12px; cursor:pointer; transition:background 0.2s; }
+  .toggle-switch.on { background:var(--green-900); }
+  .toggle-switch::after { content:''; position:absolute; top:2px; left:2px; width:20px; height:20px; background:#fff; border-radius:50%; transition:transform 0.2s; box-shadow:0 1px 3px rgba(0,0,0,0.1); }
+  .toggle-switch.on::after { transform:translateX(20px); }
+  .btn-danger-outline { padding:10px 16px; border-radius:8px; border:1px solid var(--red-700); color:var(--red-700); background:transparent; font-weight:600; cursor:pointer; transition:all 0.15s; }
+  .btn-danger-outline:hover { background:var(--red-50); }
 </style>
 </head>
 <body>
@@ -573,7 +586,7 @@
       </button>
       <div style="flex:1"></div>
       <div class="nav-footer">
-        <button class="nav-item">
+        <button class="nav-item" data-view="profile">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>
           Profile
         </button>
@@ -600,7 +613,9 @@
         <button class="icon-btn" title="Settings">
           <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg>
         </button>
-        <img class="avatar" id="topAvatar" src="https://images.unsplash.com/photo-1517849845537-4d257902861a?w=100&h=100&fit=crop" alt="Profile" />
+        <div style="cursor:pointer;" data-view="profile">
+          <img class="avatar" id="topAvatar" src="https://images.unsplash.com/photo-1517849845537-4d257902861a?w=100&h=100&fit=crop" alt="Profile" />
+        </div>
       </div>
     </header>
 
@@ -627,6 +642,74 @@
         </form>
         <div class="auth-footer">
           Don't have an account? <a href="#" onclick="alert('Switching to Sign Up...')">Create one</a>
+        </div>
+      </div>
+    </main>
+
+    <!-- ============ PROFILE VIEW ============ -->
+    <main class="view" id="view-profile">
+      <div class="page-head">
+        <div>
+          <h1>My Profile</h1>
+          <p>Manage your account, pets, and preferences</p>
+        </div>
+      </div>
+      
+      <div class="bento" style="grid-template-columns: 1fr; margin-top:24px;">
+        <div class="panel" style="display:flex; align-items:center; gap:20px; flex-wrap:wrap;">
+          <img src="https://images.unsplash.com/photo-1517849845537-4d257902861a?w=150&h=150&fit=crop" style="width:80px;height:80px;border-radius:50%;object-fit:cover;" alt="User">
+          <div>
+            <h2 style="font-size:20px;margin-bottom:4px;">Sarah Jenkins</h2>
+            <div style="color:var(--ink-soft);font-size:14px;">sarah@example.com</div>
+          </div>
+          <div style="flex:1; min-width:20px;"></div>
+          <button class="btn-primary" onclick="alert('Edit Profile')">Edit Profile</button>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><h2>My Pets</h2></div>
+          <div class="qa-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:16px;">
+            <div class="pet-card" style="display:flex;align-items:center;gap:12px;padding:12px;border:1px solid #e2e8f0;border-radius:12px;">
+              <img src="https://images.unsplash.com/photo-1552053831-71594a27632d?w=100&h=100&fit=crop" style="width:48px;height:48px;border-radius:50%;object-fit:cover;">
+              <div><div style="font-weight:600;">Bella</div><div style="font-size:12px;color:var(--ink-soft);">Golden Retriever</div></div>
+            </div>
+            <div class="pet-card" style="display:flex;align-items:center;gap:12px;padding:12px;border:1px solid #e2e8f0;border-radius:12px;">
+              <img src="https://images.unsplash.com/photo-1533738363-b7f9aef128ce?w=100&h=100&fit=crop" style="width:48px;height:48px;border-radius:50%;object-fit:cover;">
+              <div><div style="font-weight:600;">Luna</div><div style="font-size:12px;color:var(--ink-soft);">Siamese</div></div>
+            </div>
+            <div class="pet-card" style="display:flex;align-items:center;justify-content:center;gap:12px;padding:12px;border:1px dashed #cbd5e1;border-radius:12px;cursor:pointer;color:var(--ink-soft);font-weight:500;" onclick="alert('Add New Pet')">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg> Add Pet
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><h2>Account Settings</h2></div>
+          <div class="settings-row">
+            <div class="settings-info">
+              <div class="settings-title">Push Notifications</div>
+              <div class="settings-desc">Receive alerts for upcoming reminders</div>
+            </div>
+            <div class="toggle-switch on" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div class="settings-row">
+            <div class="settings-info">
+              <div class="settings-title">Email Summaries</div>
+              <div class="settings-desc">Weekly pet wellness reports</div>
+            </div>
+            <div class="toggle-switch on" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div class="settings-row">
+            <div class="settings-info">
+              <div class="settings-title">Dark Mode</div>
+              <div class="settings-desc">Switch to a darker theme</div>
+            </div>
+            <div class="toggle-switch" onclick="this.classList.toggle('on'); alert('Dark mode coming soon!')"></div>
+          </div>
+        </div>
+
+        <div style="margin-top:16px;">
+          <button class="btn-danger-outline" onclick="handleLogout()" style="width:100%;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:8px;margin-top:-2px;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Log Out</button>
         </div>
       </div>
     </main>
@@ -1495,6 +1578,10 @@ function handleLogin(e){
   switchView('home');
 }
 
+function handleLogout(){
+  switchView('auth');
+}
+
 /* ===================== NAV / VIEW SWITCHING ===================== */
 function switchView(name){
   if(name === 'auth') {
@@ -1506,7 +1593,7 @@ function switchView(name){
   document.querySelectorAll('.nav-item[data-view]').forEach(b=>b.classList.toggle('active', b.dataset.view===name));
   document.querySelectorAll('.mn-btn[data-view]').forEach(b=>b.classList.toggle('active', b.dataset.view===name));
   
-  const views = ['home','health','activity','emergency','reminders','expenses','auth'];
+  const views = ['home','health','activity','emergency','reminders','expenses','auth','profile'];
   if(views.includes(name)){
     views.forEach(v=>{
       const el = document.getElementById('view-'+v);
