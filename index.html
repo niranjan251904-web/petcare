@@ -921,8 +921,11 @@
 
     <!-- ============ ACTIVITY VIEW ============ -->
     <main class="view" id="view-activity">
-      <div class="page-head" style="margin-bottom:24px;">
+      <div class="page-head" style="margin-bottom:24px; display:flex; justify-content:space-between; align-items:center;">
         <div><h1>Activity &amp; Nutrition</h1></div>
+        <button class="icon-round-btn" style="width:40px;height:40px;background:var(--green-900);color:#fff;" onclick="openAddModal('activity')">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+        </button>
       </div>
 
       <div class="act-grid">
@@ -1082,11 +1085,14 @@
 
     <!-- ============ REMINDERS VIEW ============ -->
     <main class="view" id="view-reminders">
-      <div class="page-head">
+      <div class="page-head" style="display:flex; justify-content:space-between; align-items:center;">
         <div>
           <h1>Reminders & Tasks</h1>
           <p id="remSub">Stay on top of daily care and upcoming schedules</p>
         </div>
+        <button class="icon-round-btn" style="width:40px;height:40px;background:var(--green-900);color:#fff;" onclick="openAddModal('reminder')">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+        </button>
       </div>
       <div class="health-grid">
         <div class="panel">
@@ -1102,11 +1108,14 @@
 
     <!-- ============ EXPENSES VIEW ============ -->
     <main class="view" id="view-expenses">
-      <div class="page-head">
+      <div class="page-head" style="display:flex; justify-content:space-between; align-items:center;">
         <div>
           <h1>Financial Overview</h1>
           <p id="expSub">Track your pet care spending</p>
         </div>
+        <button class="icon-round-btn" style="width:40px;height:40px;background:var(--green-900);color:#fff;" onclick="openAddModal('expense')">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+        </button>
       </div>
       <div class="bento bento-bottom" style="margin-top:0;">
         <div class="panel" style="grid-column: span 1;">
@@ -1209,6 +1218,28 @@
       <button type="submit" class="chat-send">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
       </button>
+    </form>
+  </div>
+</div>
+
+<!-- ============ ADD ENTRY MODAL ============ -->
+<div id="addEntryModal" class="modal-overlay" onclick="if(event.target===this) closeAddModal()">
+  <div class="modal-card">
+    <div class="modal-header">
+      <div id="addModalIcon" style="color:var(--green-900);"></div>
+      <div>
+        <div class="modal-title" id="addModalTitle">Add Entry</div>
+        <div class="modal-sub" id="addModalSub">Quickly log a new record</div>
+      </div>
+      <button class="modal-close" onclick="closeAddModal()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+    <form class="modal-body" id="addEntryForm" onsubmit="handleAddSubmit(event)">
+      <input type="hidden" id="addEntryType">
+      
+      <!-- Dynamic Fields injected by JS -->
+      <div id="addEntryFields" style="display:flex; flex-direction:column; gap:16px;"></div>
+
+      <button type="submit" class="auth-submit" style="margin-top:24px;width:100%;">Save Entry</button>
     </form>
   </div>
 </div>
@@ -1320,6 +1351,80 @@ function handleChatSubmit(e) {
     msgContainer.innerHTML += `<div class="chat-bubble ai">${reply}</div>`;
     msgContainer.scrollTop = msgContainer.scrollHeight;
   }, 1000);
+}
+
+function openAddModal(type) {
+  const modal = document.getElementById('addEntryModal');
+  const title = document.getElementById('addModalTitle');
+  const icon = document.getElementById('addModalIcon');
+  const typeInput = document.getElementById('addEntryType');
+  const fields = document.getElementById('addEntryFields');
+
+  typeInput.value = type;
+
+  if (type === 'activity') {
+    title.textContent = 'Add Activity';
+    icon.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>';
+    fields.innerHTML = `
+      <div class="input-group"><label class="input-label">Activity Type (e.g. Walk, Play)</label><input type="text" id="addActType" class="auth-input" required></div>
+      <div class="input-group"><label class="input-label">Duration (minutes)</label><input type="number" id="addActDur" class="auth-input" required></div>
+    `;
+  } else if (type === 'reminder') {
+    title.textContent = 'Add Reminder';
+    icon.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/></svg>';
+    fields.innerHTML = `
+      <div class="input-group"><label class="input-label">Task Name</label><input type="text" id="addRemTitle" class="auth-input" required></div>
+      <div class="input-group"><label class="input-label">Time or Date</label><input type="text" id="addRemTime" class="auth-input" required></div>
+    `;
+  } else if (type === 'expense') {
+    title.textContent = 'Add Expense';
+    icon.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 10h20"/><rect x="2" y="6" width="20" height="14" rx="2"/></svg>';
+    fields.innerHTML = `
+      <div class="input-group"><label class="input-label">Item / Service</label><input type="text" id="addExpName" class="auth-input" required></div>
+      <div class="input-group"><label class="input-label">Category</label><select id="addExpCat" class="auth-input" style="width:100%;"><option>Food</option><option>Medical</option><option>Toys</option><option>Grooming</option><option>Supplies</option></select></div>
+      <div class="input-group"><label class="input-label">Amount ($)</label><input type="number" step="0.01" id="addExpAmt" class="auth-input" required></div>
+    `;
+  }
+  
+  modal.classList.add('open');
+}
+
+function closeAddModal() {
+  document.getElementById('addEntryModal').classList.remove('open');
+  document.getElementById('addEntryForm').reset();
+}
+
+function handleAddSubmit(e) {
+  e.preventDefault();
+  const type = document.getElementById('addEntryType').value;
+  const p = STATE.currentPet;
+
+  if (type === 'activity') {
+    const actType = document.getElementById('addActType').value;
+    const dur = document.getElementById('addActDur').value;
+    p.log.unshift({date: 'Just Now', type: 'Activity', details: actType, value: dur + ' min'});
+  } else if (type === 'reminder') {
+    const title = document.getElementById('addRemTitle').value;
+    const time = document.getElementById('addRemTime').value;
+    p.reminders.upcoming.unshift({title: title, type: 'Task', date: time});
+  } else if (type === 'expense') {
+    const name = document.getElementById('addExpName').value;
+    const cat = document.getElementById('addExpCat').value;
+    const amt = parseFloat(document.getElementById('addExpAmt').value);
+    
+    p.expenses.history.unshift({date: 'Just Now', item: name, cat: cat, amt: '$' + amt.toFixed(2)});
+    p.expenses.spentNum += amt;
+    p.expenses.total = '$' + p.expenses.spentNum.toFixed(2);
+    
+    let catObj = p.expenses.categories.find(c => c.name === cat);
+    if(catObj) {
+      let currentAmt = parseFloat(catObj.amt.replace('$',''));
+      catObj.amt = '$' + (currentAmt + amt).toFixed(2);
+    }
+  }
+
+  closeAddModal();
+  renderAll();
 }
 
 /* ===================== MOCK DATA ===================== */
