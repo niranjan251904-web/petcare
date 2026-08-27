@@ -446,9 +446,12 @@
   .aid-sub{font-size:13px;color:var(--ink-soft);font-weight:500;margin-top:2px;}
 
   /* ---------- RESPONSIVE ---------- */
+  .bento-bottom { grid-template-columns: 2fr 1fr; }
   .mobile-nav { display: none; }
   @media (max-width:1100px){
     .bento{grid-template-columns:1fr 1fr;}
+    .bento-bottom { grid-template-columns: 1fr; }
+    .empty-col { display: none; }
     .bento .col-span-2{grid-column:span 2;}
     .health-grid,.act-grid,.em-grid{grid-template-columns:1fr;}
     .aid-grid{grid-template-columns:repeat(2,1fr);}
@@ -655,8 +658,8 @@
         </section>
       </div>
 
-      <div class="bento" style="margin-top:24px;grid-template-columns:2fr 1fr;">
-        <div></div>
+      <div class="bento bento-bottom" style="margin-top:24px;">
+        <div class="empty-col"></div>
         <div class="right-panel">
           <section class="panel">
             <div class="panel-head">
